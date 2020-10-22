@@ -733,6 +733,23 @@ inline Tensor abs(const Tensor& x) { return intrinsic("abs", x); }
 ///
 inline Tensor acos(const Tensor& x) { return intrinsic("acos", x); }
 
+enum class SortDirection {
+  ASC,
+  DESC,
+};
+
+///
+/// Returns the indices of `x` which give its sorted order along `axis` in
+/// the specified `direction`, where -1 represents the last axis.
+/// \param x Tensor
+/// \param axis ssize_t
+/// \param direction SortDirection
+/// \return Tensor
+///
+inline Tensor argsort(const Tensor& x, ssize_t axis = -1, SortDirection direction = SortDirection::ASC) {
+  return intrinsic("argsort", x, static_cast<int64_t>(axis), static_cast<int64_t>(direction));
+}
+
 ///
 /// Computes the elementwise arcsine of `x`.
 /// \param x Tensor

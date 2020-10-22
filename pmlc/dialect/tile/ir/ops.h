@@ -16,6 +16,8 @@
 
 #include "pmlc/dialect/tile/ir/interfaces.h.inc"
 
+#include "pmlc/dialect/tile/ir/enums.h.inc"
+
 namespace pmlc::dialect::tile {
 
 using mlir::IntegerSet;
