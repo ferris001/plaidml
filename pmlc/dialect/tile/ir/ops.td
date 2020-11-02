@@ -90,7 +90,7 @@ class MaterializeOp<string mnemonic, list<OpTrait> traits = [NoSideEffect]> :
   }];
 }
 
-def ArgSortOp : MaterializeOp<"argsort", [NoSideEffect]> {
+def ArgSortOp : MaterializeOp<"argsort"> {
   let summary = "tensor sort index operation";
   let arguments = (ins
     RankedTensorOf<[AnyScalar]>:$tensor,
