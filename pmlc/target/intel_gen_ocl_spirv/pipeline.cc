@@ -159,6 +159,9 @@ void pipelineBuilder(OpPassManager &pm) {
   // Comp to LLVM - OpenCL function calls.
   pm.addPass(pmlc::conversion::comp_to_llvm::createConvertCompToOclPass());
 
+  // Lower SCF to Standard before converting to LLVM
+  pm.addPass(createLowerToCFGPass());
+
   // Convert to LLVM code.
   pm.addPass(pmlc::target::intel_gen::createConvertStandardToLLVM());
 }
