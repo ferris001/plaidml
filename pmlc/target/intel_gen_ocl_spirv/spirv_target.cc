@@ -36,16 +36,17 @@ public:
                        spirv::Capability::Int8,
                        spirv::Capability::Float64,
                        spirv::Capability::Float16,
+                       spirv::Capability::Vector16,
                        spirv::Capability::GroupNonUniformBallot,
                        spirv::Capability::SubgroupBufferBlockIOINTEL};
 
       if (useSpirv12) {
         spirvCap = {
-            spirv::Capability::Kernel, spirv::Capability::Addresses,
-            spirv::Capability::Groups, spirv::Capability::SubgroupDispatch,
-            spirv::Capability::Int64,  spirv::Capability::Int16,
-            spirv::Capability::Int8,   spirv::Capability::Float64,
-            spirv::Capability::Float16};
+            spirv::Capability::Kernel,  spirv::Capability::Addresses,
+            spirv::Capability::Groups,  spirv::Capability::SubgroupDispatch,
+            spirv::Capability::Int64,   spirv::Capability::Int16,
+            spirv::Capability::Int8,    spirv::Capability::Float64,
+            spirv::Capability::Float16, spirv::Capability::Vector16};
       }
 
       auto triple =
