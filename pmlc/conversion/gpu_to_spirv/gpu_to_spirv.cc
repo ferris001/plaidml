@@ -1,5 +1,7 @@
 // Copyright 2020 Intel Corporation
 
+#include "llvm/Support/Process.h"
+
 #include "mlir/Conversion/GPUToSPIRV/ConvertGPUToSPIRV.h"
 #include "mlir/Conversion/GPUToSPIRV/ConvertGPUToSPIRVPass.h"
 #include "mlir/Conversion/SCFToSPIRV/SCFToSPIRV.h"
@@ -31,8 +33,15 @@ struct StdxSubgroupBroadcastOpConversion final
                   ConversionPatternRewriter &rewriter) const final {
     auto stdxType = op.getResult().getType();
     auto spirvType = typeConverter.convertType(stdxType);
-    rewriter.replaceOpWithNewOp<spirv::GroupBroadcastOp>(
-        op, spirvType, spirv::Scope::Subgroup, operands[0], operands[1]);
+
+    auto useSpirv12 = llvm::sys::Process::GetEnv("PLAIDML_USE_SPIRV_1_2");
+    if (useSpirv12) {
+      rewriter.replaceOpWithNewOp<spirv::GroupBroadcastOp>(
+          op, spirvType, spirv::Scope::Subgroup, operands[0], operands[1]);
+    } else {
+      rewriter.replaceOpWithNewOp<spirv::GroupNonUniformBroadcastOp>(
+          op, spirvType, spirv::Scope::Subgroup, operands[0], operands[1]);
+    }
 
     return success();
   }

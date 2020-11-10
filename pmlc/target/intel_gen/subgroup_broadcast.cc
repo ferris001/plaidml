@@ -1,6 +1,7 @@
 // Copyright 2020 Intel Corporation
 
 #include "llvm/ADT/TypeSwitch.h"
+#include "llvm/Support/Process.h"
 
 #include "mlir/Dialect/GPU/ParallelLoopMapper.h"
 #include "mlir/Dialect/SCF/SCF.h"
@@ -31,7 +32,7 @@ private:
 
 public:
   DevectorizeImpl(scf::ParallelOp loop, unsigned vectorSize, bool useBlockOps)
-      : loop(loop), vectorSize(vectorSize), useBlockOps(false) {}
+      : loop(loop), vectorSize(vectorSize), useBlockOps(useBlockOps) {}
 
   bool isVectorTypeValid(VectorType type) {
     return type.getRank() == 1 && type.getDimSize(0) == vectorSize;
@@ -274,7 +275,12 @@ struct SubgroupBroadcastPass
     func.walk([&](scf::ParallelOp op) {
       int64_t subgroupSize = getIntegerTag(op, subgroupSizeTag(), 1);
       if (hasUnitTag(op, gpuThreadTag())) {
-        DevectorizeImpl impl(op, subgroupSize, useBlockOps.getValue());
+        bool blockOps = useBlockOps.getValue();
+        auto useSpirv12 = llvm::sys::Process::GetEnv("PLAIDML_USE_SPIRV_1_2");
+        if (useSpirv12) {
+          blockOps = false;
+        }
+        DevectorizeImpl impl(op, subgroupSize, blockOps);
         if (failed(impl.devectorize())) {
           signalPassFailure();
         }
